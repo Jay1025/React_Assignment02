@@ -1,25 +1,32 @@
-import logo from './logo.svg';
 import './App.css';
+import styled from "styled-components";
+import {Route} from "react-router-dom"
+
+import Memolist from './Memolist';
+import Plusword from './Plusword';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <Container className="App">
+          <Route exact path="/">
+            <Memolist/>
+          </Route>
+          <Route exact path="/plusword">
+            <Plusword/>
+          </Route>
+      </Container>
   );
 }
+
+const Container = styled.div`
+  border: 2px solid #FDDA24;
+  border-radius: 10px;
+  background: #FDDA24;
+  width: 30vw;
+  height: 90vh;
+  margin: 1vw auto;
+  box-shadow: 10px 10px 30px #fda00f;
+`;
+
 
 export default App;
