@@ -1,4 +1,5 @@
 import './App.css';
+import React from "react"
 import styled from "styled-components";
 import {Route} from "react-router-dom"
 
@@ -6,6 +7,7 @@ import Memolist from './Memolist';
 import Plusword from './Plusword';
 
 function App() {
+
   return (
       <Container className="App">
           <Route exact path="/">

@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { createDictionary } from "./redux/modules/dictionary";
+import { db } from "./firebase";
+import { collection, addDoc } from "firebase/firestore";
 
 const Plusword = () => {
   const history = useHistory();
@@ -10,7 +12,17 @@ const Plusword = () => {
   const meanText = React.useRef(null);
   const exText = React.useRef(null);
   const dispatch = useDispatch();
-
+  
+  function addWord() {
+    const new_lists = {word: wordText.current.value, mean: meanText.current.value, ex: exText.current.value};
+    if(new_lists.word === "" || new_lists.mean === "" || new_lists.ex === ""){
+      return window.alert("모든 항목을 입력해 주세요.")
+    }else {
+      dispatch(createDictionary(new_lists));
+      window.alert("단어 등록 완료!!")
+      return history.push("/")
+    }
+  }
     return (
         <Div className="App">
             <H1>단어 등록</H1>
@@ -26,10 +38,7 @@ const Plusword = () => {
                 <H5>예시</H5>
                 <Input type="text" ref={exText}/>
             </Card>
-            <Button onClick={() => {
-              dispatch(createDictionary({word: wordText.current.value, mean: meanText.current.value, ex: exText.current.value}));
-              history.push("/")
-            }}>등록</Button>
+            <Button onClick={addWord}>등록</Button>
         </Div>
     )
 }
@@ -41,6 +50,7 @@ const Div = styled.div`
 `;
 
 const H1 = styled.h1`
+  color: red;
   text-align: left;
   margin: 30px 0 20px 30px;
   padding-bottom: 10px;
@@ -54,7 +64,9 @@ const H5 = styled.h5`
 const Card = styled.div`
   border: 3px solid red;
   border-radius: 10px;
-  background: white;
+  background: red;
+  opacity: 0.4;
+  color: white;
   text-align: left;
   padding: 5px;
   margin: 2vw auto;
@@ -67,8 +79,13 @@ const Input = styled.input`
   height: 6vh;
   margin: auto;
   outline: none;
+  border: 2px solid orange;
+  background-color: orange;
+  opacity: 0.7;
+  border-radius: 10px;
   &:focus {
     border: 2px solid red;
+    border-radius: 10px;
   }
 `;
 
