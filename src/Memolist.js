@@ -2,9 +2,11 @@ import React from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import {useSelector, useDispatch} from "react-redux";
-// import { collection, getDocs } from "firebase/firestore";
-// import { db } from "./firebase";
-import { loadDictionaryFB } from "./redux/modules/dictionary";
+
+import { loadDictionaryFB, deleteDictionaryFB } from "./redux/modules/dictionary";
+
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 const Memolist = () => {
   const history = useHistory();
@@ -13,7 +15,15 @@ const Memolist = () => {
   
   React.useEffect(() => {
     dispatch(loadDictionaryFB());
-  }, []);
+  }, [dictionary_lists]);
+
+  function DeleteWord(idx){
+    if(window.confirm("정말 삭제하시겠습니까?")){
+      dispatch(deleteDictionaryFB(dictionary_lists[idx].id))
+    }else{
+      return
+    }
+  }
     return (
         <div className="App">
             <H1>My Dictionary</H1>
@@ -22,7 +32,13 @@ const Memolist = () => {
                 dictionary_lists.map((list,idx) => {
                     return (
                         <Card key={idx}>
-                        <H6>단어</H6>
+                        <H6>단어
+                          <DeleteIcon className="DeleteBtn" onClick={() => {
+                            DeleteWord(idx)}}/>
+                          <EditIcon className="EditBtn" onClick={() => {
+                            history.push("/plusword/" + idx)
+                          }}/>
+                        </H6>
                             <H4>{list.word}</H4>
                         <H6>설명</H6>
                             <H4>{list.mean}</H4>

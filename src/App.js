@@ -10,12 +10,9 @@ function App() {
 
   return (
       <Container className="App">
-          <Route exact path="/">
-            <Memolist/>
-          </Route>
-          <Route exact path="/plusword">
-            <Plusword/>
-          </Route>
+          <Route exact path="/" component={Memolist}/>
+          <Route exact path="/plusword/" component={Plusword}/>
+          <Route exact path="/plusword/:index" component={Plusword}/>
       </Container>
   );
 }

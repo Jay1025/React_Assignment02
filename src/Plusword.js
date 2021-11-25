@@ -1,44 +1,73 @@
 import React from "react";
 import styled from "styled-components";
-import { useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { createDictionary } from "./redux/modules/dictionary";
-import { db } from "./firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { useHistory, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addDictionaryFB, updateDictionaryFB } from "./redux/modules/dictionary";
 
 const Plusword = () => {
   const history = useHistory();
+  const paramIdx = useParams();
+
   const wordText = React.useRef(null);
   const meanText = React.useRef(null);
   const exText = React.useRef(null);
   const dispatch = useDispatch();
   
-  function addWord() {
-    const new_lists = {word: wordText.current.value, mean: meanText.current.value, ex: exText.current.value};
+  const dictionary_lists = useSelector((state) => state.dictionary.list);
+  
+  function updateWord() {
+    const new_lists = {word: wordText.current.value, mean: meanText.current.value, ex: exText.current.value, completed: false};
     if(new_lists.word === "" || new_lists.mean === "" || new_lists.ex === ""){
       return window.alert("모든 항목을 입력해 주세요.")
     }else {
-      dispatch(createDictionary(new_lists));
+      const doubleCheck = window.confirm("변경된 사항으로 수정하시겠습니까?");
+      if(doubleCheck){
+        dispatch(updateDictionaryFB(new_lists));
+        window.alert("단어 수정 완료!")
+        return history.push("/")
+      }else{
+        return
+      }
+    }
+  }
+
+  function addWord() {
+    const new_lists = {word: wordText.current.value, mean: meanText.current.value, ex: exText.current.value, completed: false};
+    if(new_lists.word === "" || new_lists.mean === "" || new_lists.ex === ""){
+      return window.alert("모든 항목을 입력해 주세요.")
+    }else {
+      dispatch(addDictionaryFB(new_lists));
       window.alert("단어 등록 완료!!")
       return history.push("/")
     }
   }
     return (
         <Div className="App">
-            <H1>단어 등록</H1>
+            {
+              paramIdx.index ? <H1>단어 수정</H1> : <H1>단어 등록</H1>
+            }
             <Card>
                 <H5>단어</H5>
-                <Input type="text" ref={wordText}/>
+                {
+                  paramIdx.index ? <Input type="text" ref={wordText} placeholder={dictionary_lists[paramIdx.index].word}/> : <Input type="text" ref={wordText}/>
+                }
             </Card>
             <Card>
                 <H5>설명</H5>
-                <Input type="text" ref={meanText}/>
+                {
+                  paramIdx.index ? <Input type="text" ref={meanText} placeholder={dictionary_lists[paramIdx.index].mean}/> : <Input type="text" ref={meanText}/>
+                }
             </Card>
             <Card>
                 <H5>예시</H5>
-                <Input type="text" ref={exText}/>
+                {
+                  paramIdx.index ? <Input type="text" ref={exText} placeholder={dictionary_lists[paramIdx.index].ex}/> : <Input type="text" ref={exText}/>
+                }
             </Card>
-            <Button onClick={addWord}>등록</Button>
+            {
+              paramIdx.index ? <Button onClick={updateWord}>수정</Button> : <Button onClick={addWord}>등록</Button>
+            }
+            <Button onClick={() => { history.goBack(); }}>목록</Button>
         </Div>
     )
 }
@@ -75,6 +104,7 @@ const Card = styled.div`
 `;
 
 const Input = styled.input`
+  color: black;
   width: 24.5vw;
   height: 6vh;
   margin: auto;
@@ -98,6 +128,7 @@ const Button = styled.button`
   width: 25vw;
   color: white;
   cursor: pointer;
+  margin-bottom: 5px;
 `;
 
 export default Plusword;
