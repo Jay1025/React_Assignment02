@@ -21,8 +21,8 @@ export const createDictionary = (word) => {
     return {type: CREATE, word};
 };
 
-export const updateDictionary = (word_id) => {
-  return {type: UPDATE, word_id}
+export const updateDictionary = (a, b, c) => {
+  return {type: UPDATE, a, b, c}
 }
 
 export const deleteDictionary = (word_id) => {
@@ -58,22 +58,21 @@ export const loadDictionaryFB = () => {
     }
   }
 
-  export const updateDictionaryFB = (word) => {
+  export const updateDictionaryFB = (updatedWord, word_id) => {
     return async function (dispatch, getState) {
       // 수정할 도큐먼트를 가져오고,
-      const docRef = doc(db, "Dictionary", word);
+      const docRef = doc(db, "Dictionary", word_id);
       // 수정합시다!
-      console.log(docRef)
-      await updateDoc(docRef, { word: word.word, mean: word.mean, ex: word.ex });
+      await updateDoc(docRef, {word: updatedWord.word, mean: updatedWord.mean, ex: updatedWord.ex});
       // getState()를 사용해서 스토어의 데이터를 가져올 수 있어요.
-      console.log(getState().dictionary);
+      console.log(getState().dictionary)
       // dictionary list 데이터를 가져와요.
       const _dictionary_list = getState().dictionary.list;
       // findIndex로 몇 번째에 있는 지 찾기!
       const dictionary_index = _dictionary_list.findIndex((b) => {
         // updateBucketFB의 파라미터로 넘겨받은 아이디와 
         // 아이디가 독같은 요소는 몇 번째에 있는 지 찾아봐요!
-        return b.id === word.id;
+        return b.id === word_id;
       })
   
       dispatch(updateDictionary(dictionary_index));
@@ -112,7 +111,7 @@ export default function reducer(state = initialState, action = {}){
         case "dictionary/UPDATE": {
           const update_list = state.list.map((l, idx) => {
             if(parseInt(action.word_index) === idx){
-                return {...l, word: true};
+                return {...l };
             }else {
                 return l;
             }

@@ -15,14 +15,14 @@ const Plusword = () => {
   
   const dictionary_lists = useSelector((state) => state.dictionary.list);
   
-  function updateWord() {
+  function updateWord(index) {
     const new_lists = {word: wordText.current.value, mean: meanText.current.value, ex: exText.current.value, completed: false};
     if(new_lists.word === "" || new_lists.mean === "" || new_lists.ex === ""){
       return window.alert("모든 항목을 입력해 주세요.")
     }else {
       const doubleCheck = window.confirm("변경된 사항으로 수정하시겠습니까?");
       if(doubleCheck){
-        dispatch(updateDictionaryFB(new_lists));
+        dispatch(updateDictionaryFB(new_lists ,dictionary_lists[index].id));
         window.alert("단어 수정 완료!")
         return history.push("/")
       }else{
@@ -65,7 +65,7 @@ const Plusword = () => {
                 }
             </Card>
             {
-              paramIdx.index ? <Button onClick={updateWord}>수정</Button> : <Button onClick={addWord}>등록</Button>
+              paramIdx.index ? <Button onClick={() => {updateWord(paramIdx.index)}}>수정</Button> : <Button onClick={addWord}>등록</Button>
             }
             <Button onClick={() => { history.goBack(); }}>목록</Button>
         </Div>
