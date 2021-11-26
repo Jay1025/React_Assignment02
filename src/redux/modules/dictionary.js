@@ -48,11 +48,8 @@ export const loadDictionaryFB = () => {
   export const addDictionaryFB = (word) => {
     return async function (dispatch) {
       //firebase에 추가하기를 대기
-      const docRef = await addDoc(collection(db, "Dictionary"), word);
-      // 추가한 데이터 중 id를 가져와서 dicationary_data를 생성
-      const dictionary_data = { id: docRef.id, ...word };
-      // 수정 요청
-      dispatch(createDictionary(dictionary_data));
+      await addDoc(collection(db, "Dictionary"), word);
+  
     }
   }
 

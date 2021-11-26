@@ -17,15 +17,18 @@ const Memolist = () => {
   // dispatch를 통해 firebase에 저장되어 있는 단어 불러오기 요청
   React.useEffect(() => {
     dispatch(loadDictionaryFB());
-    // console.log(dictionary_lists);
-  }, [dictionary_lists]);
+  }, []);
 
   // 단어 삭제기능 함수
   function DeleteWord(idx){
     if(window.confirm("정말 삭제하시겠습니까?")){
       // 해당 단어의 index를 받아와 전체 단어 data의 index값에 해당하는 id를 넘겨주고,
-      // firebase에서 일치하는 id를 가진 단어를 삭제해달라고 요청   
-      dispatch(deleteDictionaryFB(dictionary_lists[idx].id))
+      // firebase에서 일치하는 id를 가진 단어를 삭제해달라고 요청  
+      window.alert("삭제완료!")
+      console.log("체크")
+      return (
+        dispatch(deleteDictionaryFB(dictionary_lists[idx].id)), dispatch(loadDictionaryFB())
+      )
     }else{
       return
     }
