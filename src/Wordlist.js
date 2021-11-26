@@ -2,23 +2,29 @@ import React from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import {useSelector, useDispatch} from "react-redux";
-
 import { loadDictionaryFB, deleteDictionaryFB } from "./redux/modules/dictionary";
 
+//matarial-ui icon 가져오기
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
 const Memolist = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+  // redux 부분에 저장되어 있는 data 가져오기
   const dictionary_lists = useSelector((state) => state.dictionary.list);
   
+  // dispatch를 통해 firebase에 저장되어 있는 단어 불러오기 요청
   React.useEffect(() => {
     dispatch(loadDictionaryFB());
+    // console.log(dictionary_lists);
   }, [dictionary_lists]);
 
+  // 단어 삭제기능 함수
   function DeleteWord(idx){
     if(window.confirm("정말 삭제하시겠습니까?")){
+      // 해당 단어의 index를 받아와 전체 단어 data의 index값에 해당하는 id를 넘겨주고,
+      // firebase에서 일치하는 id를 가진 단어를 삭제해달라고 요청   
       dispatch(deleteDictionaryFB(dictionary_lists[idx].id))
     }else{
       return
@@ -28,13 +34,17 @@ const Memolist = () => {
         <div className="App">
             <H1>My Dictionary</H1>
             <Linebox>
+            {/* redux의 모든 데이터를 map함수를 활용해 화면에 뿌려주기 (반복문 효과) */}
             {   
                 dictionary_lists.map((list,idx) => {
                     return (
                         <Card key={idx}>
                         <H6>단어
+                          {/* 삭제 버튼 클릭시 해당 단어의 index값을 DeleteWord함수에 넘겨줌 */}
                           <DeleteIcon className="DeleteBtn" onClick={() => {
                             DeleteWord(idx)}}/>
+                            {/* 수정 화면으로 아동했을시, 화면에 선택한 단어의 값들을 가져오기 위해
+                            수정 버튼 클릭시 해당 단어의 index값을 기본 설정 경로 뒤에 붙여주어 이동 */}
                           <EditIcon className="EditBtn" onClick={() => {
                             history.push("/plusword/" + idx)
                           }}/>
@@ -49,6 +59,7 @@ const Memolist = () => {
                  }) 
              }
             </Linebox>
+            {/* 버튼 클릭시 react hook useHistory를 통해 경로 이동 */}
             <Button onClick={() => {
                 history.push("/plusword")
             }}>+</Button>

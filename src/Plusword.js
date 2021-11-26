@@ -7,7 +7,7 @@ import { addDictionaryFB, updateDictionaryFB } from "./redux/modules/dictionary"
 const Plusword = () => {
   const history = useHistory();
   const paramIdx = useParams();
-
+  // html의 id와 같이, 해당 단어의 value값을 쉽게 가져오기 위해 useRef를 이용해서 요소를 지정 
   const wordText = React.useRef(null);
   const meanText = React.useRef(null);
   const exText = React.useRef(null);
@@ -15,14 +15,21 @@ const Plusword = () => {
   
   const dictionary_lists = useSelector((state) => state.dictionary.list);
   
+  //수정하기 요청 함수
   function updateWord(index) {
-    const new_lists = {word: wordText.current.value, mean: meanText.current.value, ex: exText.current.value, completed: false};
+    // 3개의 Input value값들을 useRef로 가져와 변수 선언
+    const new_lists = {word: wordText.current.value, mean: meanText.current.value, ex: exText.current.value};
+    // 공백일 경우 경고문 출력
     if(new_lists.word === "" || new_lists.mean === "" || new_lists.ex === ""){
       return window.alert("모든 항목을 입력해 주세요.")
     }else {
+      // 입력 사항을 알림창을 통해 다시 한 번 확인
       const doubleCheck = window.confirm("변경된 사항으로 수정하시겠습니까?");
       if(doubleCheck){
+        //해당 단어를 변경된 값들로 수정하기 위해 firebase에 저장된 id와 동일한 단어를 찾기위해 id값을 넘겨주고,
+        //수정할 value값들도 넘겨주어 수정 요청  
         dispatch(updateDictionaryFB(new_lists ,dictionary_lists[index].id));
+        //단어 수정 완료 후 메인으로 이동 
         window.alert("단어 수정 완료!")
         return history.push("/")
       }else{
@@ -30,38 +37,45 @@ const Plusword = () => {
       }
     }
   }
-
+  
+  //단어 추가하기 요청 함수
   function addWord() {
-    const new_lists = {word: wordText.current.value, mean: meanText.current.value, ex: exText.current.value, completed: false};
+    // 3개의 Input value값들을 useRef로 가져와 변수 선언
+    const new_lists = {word: wordText.current.value, mean: meanText.current.value, ex: exText.current.value};
+    // 공백일 경우 경고문 출력
     if(new_lists.word === "" || new_lists.mean === "" || new_lists.ex === ""){
       return window.alert("모든 항목을 입력해 주세요.")
     }else {
+    // dispatch를 통해 입력한 값들을 firebase에 추가시켜 주기를 요청  
       dispatch(addDictionaryFB(new_lists));
+      //단어 등록 완료 후, 메인으로 돌아가기
       window.alert("단어 등록 완료!!")
       return history.push("/")
     }
   }
     return (
         <Div className="App">
+          {/* 단어 추가하기 페이지와 수정하기 페이지에 중복되는 값이 많기 때문에, 
+          useParams를 활용해 기본경로 뒤에 index값이 있냐 업냐의 차이에 따라 3항연산식을 활용해 화면에 보여줄 값을 달리해줌*/}
             {
               paramIdx.index ? <H1>단어 수정</H1> : <H1>단어 등록</H1>
             }
             <Card>
                 <H5>단어</H5>
                 {
-                  paramIdx.index ? <Input type="text" ref={wordText} placeholder={dictionary_lists[paramIdx.index].word}/> : <Input type="text" ref={wordText}/>
+                  paramIdx.index ? <Input type="text" ref={wordText} defaultValue={dictionary_lists[paramIdx.index].word}/> : <Input type="text" ref={wordText}/>
                 }
             </Card>
             <Card>
                 <H5>설명</H5>
                 {
-                  paramIdx.index ? <Input type="text" ref={meanText} placeholder={dictionary_lists[paramIdx.index].mean}/> : <Input type="text" ref={meanText}/>
+                  paramIdx.index ? <Input type="text" ref={meanText} defaultValue={dictionary_lists[paramIdx.index].mean}/> : <Input type="text" ref={meanText}/>
                 }
             </Card>
             <Card>
                 <H5>예시</H5>
                 {
-                  paramIdx.index ? <Input type="text" ref={exText} placeholder={dictionary_lists[paramIdx.index].ex}/> : <Input type="text" ref={exText}/>
+                  paramIdx.index ? <Input type="text" ref={exText} defaultValue={dictionary_lists[paramIdx.index].ex}/> : <Input type="text" ref={exText}/>
                 }
             </Card>
             {

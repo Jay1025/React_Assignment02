@@ -3,15 +3,18 @@ import React from "react"
 import styled from "styled-components";
 import {Route} from "react-router-dom"
 
-import Memolist from './Memolist';
+import Wordlist from './Wordlist';
 import Plusword from './Plusword';
 
 function App() {
 
   return (
       <Container className="App">
-          <Route exact path="/" component={Memolist}/>
+          {/* 메인화면 단어 목록, 삭제 컴포넌트 */}
+          <Route exact path="/" component={Wordlist}/>
+          {/* 단어 추가하기 컴포넌트 */}
           <Route exact path="/plusword/" component={Plusword}/>
+          {/* 단어 수정하기 컴포넌트 */}
           <Route exact path="/plusword/:index" component={Plusword}/>
       </Container>
   );

@@ -21,57 +21,55 @@ export const createDictionary = (word) => {
     return {type: CREATE, word};
 };
 
-export const updateDictionary = (a, b, c) => {
-  return {type: UPDATE, a, b, c}
+export const updateDictionary = (word) => {
+  return {type: UPDATE, word}
 }
 
 export const deleteDictionary = (word_id) => {
   return {type: DELETE, word_id}
 }
 
-// 파이어베이스랑 통신하는 부분
+//firebase와 통신하는 부분
 export const loadDictionaryFB = () => {
     return async function (dispatch) {
       // 데이터를 가져온다!
       const dictionary_data = await getDocs(collection(db, "Dictionary"));
       let dictionary_list  = [];
-      // 하나씩 우리가 쓸 수 있는 배열 데이터로 만들어줍시다!
+      // 하나씩 우리가 쓸 수 있는 배열 데이터로 만들어준다
       dictionary_data.forEach((word) => {
-        // 콘솔로 확인해요!
-        // console.log(word.id, word.data());
-        dictionary_list.push({ id: word.id, ...word.data() });
+      dictionary_list.push({ id: word.id, ...word.data() });
       });
   
-      // 잘 만들어졌는 지 리스트도 확인해봐요! :)
+      // 잘 만들어졌는지 리스트 확인
       dispatch(loadDictionary(dictionary_list));
     }
   }
 
   export const addDictionaryFB = (word) => {
     return async function (dispatch) {
-      // 파이어스토어에 추가하기를 기다려요!
+      //firebase에 추가하기를 대기
       const docRef = await addDoc(collection(db, "Dictionary"), word);
-      // 추가한 데이터 중 id를 가져와서 bucket_data를 만들어줬어요!
+      // 추가한 데이터 중 id를 가져와서 dicationary_data를 생성
       const dictionary_data = { id: docRef.id, ...word };
-      // 그럼 이제 액션을 일으키자! (수정해달라고 요청하자!)
+      // 수정 요청
       dispatch(createDictionary(dictionary_data));
     }
   }
 
   export const updateDictionaryFB = (updatedWord, word_id) => {
     return async function (dispatch, getState) {
-      // 수정할 도큐먼트를 가져오고,
+      // 수정할 document 가져오기
       const docRef = doc(db, "Dictionary", word_id);
-      // 수정합시다!
+      // 수정
       await updateDoc(docRef, {word: updatedWord.word, mean: updatedWord.mean, ex: updatedWord.ex});
-      // getState()를 사용해서 스토어의 데이터를 가져올 수 있어요.
+      // getState()를 사용해서 스토어의 데이터를 가져오기
       console.log(getState().dictionary)
-      // dictionary list 데이터를 가져와요.
+      // dictionary list 데이터 가져오기
       const _dictionary_list = getState().dictionary.list;
-      // findIndex로 몇 번째에 있는 지 찾기!
+      // findIndex로 몇 번째에 있는 지 찾기
       const dictionary_index = _dictionary_list.findIndex((b) => {
         // updateBucketFB의 파라미터로 넘겨받은 아이디와 
-        // 아이디가 독같은 요소는 몇 번째에 있는 지 찾아봐요!
+        // 아이디가 똑같은 요소는 몇 번째에 있는 지 찾는다.
         return b.id === word_id;
       })
   
